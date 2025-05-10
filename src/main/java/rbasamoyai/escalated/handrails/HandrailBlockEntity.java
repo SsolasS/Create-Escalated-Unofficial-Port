@@ -2,6 +2,7 @@ package rbasamoyai.escalated.handrails;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
@@ -100,7 +101,7 @@ public class HandrailBlockEntity extends SmartBlockEntity {
         this.handrailColor = tag.contains("Dye", Tag.TAG_STRING) ? NBTHelper.readEnum(tag, "Dye", DyeColor.class) : null;
 
         if (clientPacket)
-            EnvExecute.executeOnClient(() -> () -> requestModelDataUpdate());
+            EnvExecute.executeOnClient(() -> () -> VisualizationHelper.queueUpdate(this));
     }
 
     @Override

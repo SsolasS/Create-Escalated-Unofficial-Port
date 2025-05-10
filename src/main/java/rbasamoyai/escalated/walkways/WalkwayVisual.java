@@ -6,6 +6,8 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
 import dev.engine_room.flywheel.api.instance.Instance;
+import dev.engine_room.flywheel.api.instance.Instancer;
+import dev.engine_room.flywheel.api.model.Model;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import dev.engine_room.flywheel.lib.instance.InstanceTypes;
@@ -17,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -25,11 +28,11 @@ import static rbasamoyai.escalated.walkways.WalkwayRenderer.getStepOffset;
 
 public class WalkwayVisual extends KineticBlockEntityVisual<WalkwayBlockEntity> implements SimpleDynamicVisual {
 
-    private RotatingInstance leftShaft;
-    private RotatingInstance rightShaft;
-    private RotatingInstance bottomShaft;
-    private OrientedInstance backStep;
-    private OrientedInstance frontStep;
+    private final RotatingInstance leftShaft;
+    private final RotatingInstance rightShaft;
+    private final RotatingInstance bottomShaft;
+    private final OrientedInstance backStep;
+    private final OrientedInstance frontStep;
     private DyeColor color;
 
     public WalkwayVisual(VisualizationContext ctx, WalkwayBlockEntity blockEntity, float partialTick) {
@@ -41,23 +44,25 @@ public class WalkwayVisual extends KineticBlockEntityVisual<WalkwayBlockEntity> 
         Direction right = left.getOpposite();
 
         if (kinetic.hasShaftTowards(level, this.pos, this.blockState, left)) {
-            this.leftShaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, left)).createInstance();
-            this.leftShaft.setup(blockEntity, left.getAxis()).setChanged();
+            this.leftShaft = this.getShaftInstancer(left).createInstance();
         } else {
-            this.leftShaft = null;
+            this.leftShaft = this.getEmptyShaftInstancer().createInstance();
         }
+        this.leftShaft.setPosition(this.getVisualPosition()).setup(blockEntity, left.getAxis());
+
         if (kinetic.hasShaftTowards(level, this.pos, this.blockState, right)) {
-            this.rightShaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, right)).createInstance();
-            this.rightShaft.setup(blockEntity, right.getAxis()).setChanged();
+            this.rightShaft = this.getShaftInstancer(right).createInstance();
         } else {
-            this.rightShaft = null;
+            this.rightShaft = this.getEmptyShaftInstancer().createInstance();
         }
+        this.rightShaft.setPosition(this.getVisualPosition()).setup(blockEntity, right.getAxis());
+
         if (kinetic.hasShaftTowards(level, this.pos, this.blockState, Direction.DOWN)) {
-            this.bottomShaft = instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, Direction.DOWN)).createInstance();
-            this.bottomShaft.setup(blockEntity, Direction.Axis.Y).setChanged();
+            this.bottomShaft = this.getShaftInstancer(Direction.DOWN).createInstance();
         } else {
-            this.bottomShaft = null;
+            this.bottomShaft = this.getEmptyShaftInstancer().createInstance();
         }
+        this.bottomShaft.setPosition(this.getVisualPosition()).setup(blockEntity, Direction.Axis.Y);
 
         boolean isTerminal = walkway.getWalkwaySlope(this.blockState) == WalkwaySlope.TERMINAL;
         boolean isController = this.blockEntity.isController();
@@ -71,38 +76,71 @@ public class WalkwayVisual extends KineticBlockEntityVisual<WalkwayBlockEntity> 
             boolean flag = facing == Direction.NORTH || facing == Direction.EAST;
             facing = isController ? facing.getOpposite() : facing;
             if (flag) {
-                this.backStep = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model, facing)).createInstance();
+                this.backStep = this.getStepInstancer(Models.partial(model, facing)).createInstance();
                 this.backStep.position(getStepOffset(this.blockEntity, facing, pos1, false)).setChanged();
+                this.frontStep = this.getEmptyStepInstancer().createInstance();
             } else {
-                this.frontStep = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model, facing)).createInstance();
+                this.frontStep = this.getStepInstancer(Models.partial(model, facing)).createInstance();
                 this.frontStep.position(getStepOffset(this.blockEntity, facing, pos1, true)).setChanged();
+                this.backStep = this.getEmptyStepInstancer().createInstance();
             }
         } else {
-            this.frontStep = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model, facing)).createInstance();
+            this.frontStep = this.getStepInstancer(Models.partial(model, facing)).createInstance();
             this.frontStep.position(getStepOffset(this.blockEntity, facing, pos1, true)).setChanged();
 
-            this.backStep = instancerProvider().instancer(InstanceTypes.ORIENTED, Models.partial(model, facing)).createInstance();
+            this.backStep = this.getStepInstancer(Models.partial(model, facing)).createInstance();
             this.backStep.position(getStepOffset(this.blockEntity, facing, pos1, false)).setChanged();
         }
     }
 
+    private Instancer<RotatingInstance> getShaftInstancer(Direction dir) {
+        return this.instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFT_HALF, dir));
+    }
+
+    private Instancer<RotatingInstance> getEmptyShaftInstancer() {
+        return this.instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.block(Blocks.AIR.defaultBlockState()));
+    }
+
+    private Instancer<OrientedInstance> getStepInstancer(Model model) {
+        return this.instancerProvider().instancer(InstanceTypes.ORIENTED, model);
+    }
+
+    private Instancer<OrientedInstance> getEmptyStepInstancer() {
+        return this.instancerProvider().instancer(InstanceTypes.ORIENTED, Models.block(Blocks.AIR.defaultBlockState()));
+    }
+
+    private void updateSteps() {
+        WalkwayBlock walkway = (WalkwayBlock) this.blockState.getBlock();
+        boolean isTerminal = walkway.getWalkwaySlope(this.blockState) == WalkwaySlope.TERMINAL;
+        boolean isController = this.blockEntity.isController();
+        Direction facing = this.getFacing();
+
+        PartialModel model = this.getStepModel();
+        if (isTerminal) {
+            boolean flag = facing == Direction.NORTH || facing == Direction.EAST;
+            facing = isController ? facing.getOpposite() : facing;
+            if (flag) {
+                this.getStepInstancer(Models.partial(model, facing)).stealInstance(this.backStep);
+                this.getEmptyStepInstancer().stealInstance(this.frontStep);
+            } else {
+                this.getStepInstancer(Models.partial(model, facing)).stealInstance(this.frontStep);
+                this.getEmptyStepInstancer().stealInstance(this.backStep);
+            }
+        } else {
+            this.getStepInstancer(Models.partial(model, facing)).stealInstance(this.frontStep);
+            this.getStepInstancer(Models.partial(model, facing)).stealInstance(this.backStep);
+        }
+        this.frontStep.setChanged();
+        this.backStep.setChanged();
+    }
+
     @Override
     public void _delete() {
-        if (this.leftShaft != null)
-            this.leftShaft.delete();
-        this.leftShaft = null;
-        if (this.rightShaft != null)
-            this.rightShaft.delete();
-        this.rightShaft = null;
-        if (this.bottomShaft != null)
-            this.bottomShaft.delete();
-        this.bottomShaft = null;
-        if (this.backStep != null)
-            this.backStep.delete();
-        this.backStep = null;
-        if (this.frontStep != null)
-            this.frontStep.delete();
-        this.frontStep = null;
+        this.leftShaft.delete();
+        this.rightShaft.delete();
+        this.bottomShaft.delete();
+        this.backStep.delete();
+        this.frontStep.delete();
     }
 
     protected Direction getFacing() {
@@ -113,50 +151,34 @@ public class WalkwayVisual extends KineticBlockEntityVisual<WalkwayBlockEntity> 
     public void beginFrame(DynamicVisual.Context ctx) {
         Direction facing = this.getFacing();
         BlockPos pos = this.getVisualPosition();
-        if (this.frontStep != null)
-            this.frontStep.position(getStepOffset(this.blockEntity, facing, pos, true)).setChanged();
-        if (this.backStep != null)
-            this.backStep.position(getStepOffset(this.blockEntity, facing, pos, false)).setChanged();
+        this.frontStep.position(getStepOffset(this.blockEntity, facing, pos, true)).setChanged();
+        this.backStep.position(getStepOffset(this.blockEntity, facing, pos, false)).setChanged();
     }
 
     @Override
     public void update(float partialTick) {
         super.update(partialTick);
-        // fixme
-        /*if (this.leftShaft != null)
-            this.updateRotation(this.leftShaft);
-        if (this.rightShaft != null)
-            this.updateRotation(this.rightShaft);
-        if (this.bottomShaft != null)
-            this.updateRotation(this.bottomShaft, Direction.Axis.Y);*/
-    }
+        KineticBlock kinetic = (KineticBlock) this.blockState.getBlock();
+        Direction.Axis axis = kinetic.getRotationAxis(this.blockState);
 
-    // fixme
-    /*@Override
-    public boolean shouldReset() {
-        if (super.shouldReset())
-            return true;
-        if (this.blockEntity.getColor() != this.color)
-            return true;
-        if (this.blockEntity.resetClientRender) {
+        if (this.blockEntity.getColor() != this.color || this.blockEntity.resetClientRender) {
+            this.color = this.blockEntity.getColor();
             this.blockEntity.resetClientRender = false;
-            return true;
+            this.updateSteps();
         }
-        return false;
-    }*/
+
+        this.leftShaft.setup(this.blockEntity, axis).setChanged();
+        this.rightShaft.setup(this.blockEntity, axis).setChanged();
+        this.bottomShaft.setup(this.blockEntity, Direction.Axis.Y).setChanged();
+    }
 
     @Override
     public void updateLight(float partialTick) {
-        if (this.leftShaft != null)
-            this.relight(this.pos, this.leftShaft);
-        if (this.rightShaft != null)
-            this.relight(this.pos, this.rightShaft);
-        if (this.bottomShaft != null)
-            this.relight(this.pos, this.bottomShaft);
-        if (this.backStep != null)
-            this.relight(this.pos, this.backStep);
-        if (this.frontStep != null)
-            this.relight(this.pos, this.frontStep);
+        this.relight(this.pos, this.leftShaft);
+        this.relight(this.pos, this.rightShaft);
+        this.relight(this.pos, this.bottomShaft);
+        this.relight(this.pos, this.backStep);
+        this.relight(this.pos, this.frontStep);
     }
 
     /**
@@ -166,10 +188,10 @@ public class WalkwayVisual extends KineticBlockEntityVisual<WalkwayBlockEntity> 
 
     @Override
     public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
-        consumer.accept(leftShaft);
-        consumer.accept(rightShaft);
-        consumer.accept(bottomShaft);
-        consumer.accept(frontStep);
-        consumer.accept(backStep);
+        consumer.accept(this.leftShaft);
+        consumer.accept(this.rightShaft);
+        consumer.accept(this.bottomShaft);
+        consumer.accept(this.frontStep);
+        consumer.accept(this.backStep);
     }
 }

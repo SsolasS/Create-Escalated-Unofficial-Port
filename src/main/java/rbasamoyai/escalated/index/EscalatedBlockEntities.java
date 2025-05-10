@@ -2,11 +2,11 @@ package rbasamoyai.escalated.index;
 
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import rbasamoyai.escalated.handrails.HandrailBlockEntity;
-import rbasamoyai.escalated.handrails.HandrailInstance;
 import rbasamoyai.escalated.handrails.HandrailRenderer;
+import rbasamoyai.escalated.handrails.HandrailVisual;
 import rbasamoyai.escalated.walkways.WalkwayBlockEntity;
-import rbasamoyai.escalated.walkways.WalkwayVisual;
 import rbasamoyai.escalated.walkways.WalkwayRenderer;
+import rbasamoyai.escalated.walkways.WalkwayVisual;
 
 import static rbasamoyai.escalated.CreateEscalated.REGISTRATE;
 
@@ -14,7 +14,7 @@ public class EscalatedBlockEntities {
 
     public static final BlockEntityEntry<WalkwayBlockEntity> WALKWAY = REGISTRATE
             .blockEntity("walkway", WalkwayBlockEntity::new)
-            .instance(() -> WalkwayVisual::new)
+            .visual(() -> WalkwayVisual::new)
             .renderer(() -> WalkwayRenderer::new)
             .validBlocks(EscalatedBlocks.METAL_WALKWAY_TERMINAL, EscalatedBlocks.METAL_NARROW_WALKWAY,
                     EscalatedBlocks.METAL_WIDE_WALKWAY_SIDE, EscalatedBlocks.METAL_WIDE_WALKWAY_CENTER,
@@ -26,7 +26,7 @@ public class EscalatedBlockEntities {
 
     public static final BlockEntityEntry<HandrailBlockEntity> HANDRAIL = REGISTRATE
             .blockEntity("handrail", HandrailBlockEntity::new)
-            .instance(() -> HandrailInstance::new)
+            .visual(() -> HandrailVisual::new)
             .renderer(() -> HandrailRenderer::new)
             .validBlocks(EscalatedBlocks.METAL_WALKWAY_HANDRAIL, EscalatedBlocks.METAL_ESCALATOR_HANDRAIL,
                     EscalatedBlocks.WOODEN_WALKWAY_HANDRAIL, EscalatedBlocks.WOODEN_ESCALATOR_HANDRAIL,

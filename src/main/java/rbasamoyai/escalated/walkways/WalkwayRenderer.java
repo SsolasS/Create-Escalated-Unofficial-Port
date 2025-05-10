@@ -8,6 +8,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -182,7 +183,7 @@ public class WalkwayRenderer extends KineticBlockEntityRenderer<WalkwayBlockEnti
         if (EscalatedBlocks.WOODEN_WIDE_ESCALATOR_CENTER.has(state))
             return EscalatedBlockPartials.DYED_WOODEN_ESCALATOR_STEPS_CENTER.getOrDefault(color, EscalatedBlockPartials.WOODEN_ESCALATOR_STEP_CENTER);
 
-        if (terminal && Backend.canUseInstancing(level))
+        if (terminal && VisualizationHelper.canVisualize(be))
             be.lazyResetClientRender = true; // Reset next tick
         return EscalatedBlockPartials.DYED_METAL_WALKWAY_STEPS.get(DyeColor.RED); // Troubleshooting
     }
