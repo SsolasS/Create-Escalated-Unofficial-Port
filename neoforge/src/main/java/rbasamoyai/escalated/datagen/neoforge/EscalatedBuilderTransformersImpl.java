@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.datagen.forge;
+package rbasamoyai.escalated.datagen.neoforge;
 
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;

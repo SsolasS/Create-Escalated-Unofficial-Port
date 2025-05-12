@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.walkways.forge;
+package rbasamoyai.escalated.walkways.neoforge;
 
 import com.simibubi.create.content.fluids.transfer.GenericItemEmptying;
 import net.minecraft.world.item.DyeColor;

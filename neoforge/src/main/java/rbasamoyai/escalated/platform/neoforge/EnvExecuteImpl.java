@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.platform.forge;
+package rbasamoyai.escalated.platform.neoforge;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.forge;
+package rbasamoyai.escalated.neoforge;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.TickEvent;

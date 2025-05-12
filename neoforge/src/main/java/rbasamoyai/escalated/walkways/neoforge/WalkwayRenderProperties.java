@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.walkways.forge;
+package rbasamoyai.escalated.walkways.neoforge;
 
 import com.simibubi.create.foundation.block.render.MultiPosDestructionHandler;
 import com.simibubi.create.foundation.block.render.ReducedDestroyEffects;

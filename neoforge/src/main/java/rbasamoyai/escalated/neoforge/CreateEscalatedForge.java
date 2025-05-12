@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.forge;
+package rbasamoyai.escalated.neoforge;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;

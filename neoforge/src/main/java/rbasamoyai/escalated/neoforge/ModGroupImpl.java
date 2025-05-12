@@ -1,4 +1,4 @@
-package rbasamoyai.escalated.forge;
+package rbasamoyai.escalated.neoforge;
 
 import com.simibubi.create.Create;
 import net.minecraft.core.registries.Registries;
