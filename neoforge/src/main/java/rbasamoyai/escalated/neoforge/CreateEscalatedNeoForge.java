@@ -1,5 +1,6 @@
 package rbasamoyai.escalated.neoforge;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
@@ -7,13 +8,17 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import rbasamoyai.escalated.CreateEscalated;
 import rbasamoyai.escalated.config.EscalatedConfigs;
+import rbasamoyai.escalated.index.EscalatedDataComponents;
+import rbasamoyai.escalated.index.EscalatedTriggers;
 
 @Mod(CreateEscalated.MOD_ID)
-public class CreateEscalatedForge {
+public class CreateEscalatedNeoForge {
 
-    public CreateEscalatedForge(IEventBus modBus) {
+    public CreateEscalatedNeoForge(IEventBus modBus) {
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         ModLoadingContext mlContext = ModLoadingContext.get();
 
@@ -22,27 +27,33 @@ public class CreateEscalatedForge {
         CreateEscalated.init();
         ModGroupImpl.registerForge(modBus);
 
-        EscalatedConfigs.registerConfigs(mlContext::registerConfig);
+        EscalatedConfigs.registerConfigs(mlContext.getActiveContainer()::registerConfig);
 
         modBus.addListener(this::onLoadConfig);
         modBus.addListener(this::onReloadConfig);
+        modBus.addListener(this::onRegister);
 
         forgeBus.addListener(this::onServerTick);
         forgeBus.addListener(this::onServerStopping);
+    }
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EscalatedClientForge.prepareClient(modBus, forgeBus));
+
+    public void onRegister(final RegisterEvent event) {
+        EscalatedDataComponents.register();
+        if (event.getRegistry() == BuiltInRegistries.TRIGGER_TYPES) {
+            EscalatedTriggers.register();
+        }
     }
 
     private void onLoadConfig(ModConfigEvent.Loading evt) { EscalatedConfigs.onLoad(evt.getConfig()); }
 
     private void onReloadConfig(ModConfigEvent.Reloading evt) { EscalatedConfigs.onReload(evt.getConfig()); }
 
-    private void onServerTick(final TickEvent.ServerTickEvent evt) {
-        if (evt.phase == TickEvent.Phase.END) {
-            CreateEscalated.onServerTick(evt.getServer());
-        }
+    private void onServerTick(final ServerTickEvent.Post evt) {
+        CreateEscalated.onServerTick(evt.getServer());
     }
 
     private void onServerStopping(final ServerStoppingEvent evt) { CreateEscalated.onServerStopping(); }
 
 }
+

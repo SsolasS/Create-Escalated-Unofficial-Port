@@ -3,6 +3,7 @@ package rbasamoyai.escalated;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rbasamoyai.escalated.advancements.WalkwayTravelTracker;
@@ -25,8 +26,6 @@ public class CreateEscalated {
         EscalatedBlocks.register();
         EscalatedItems.register();
         EscalatedBlockEntities.register();
-
-        EscalatedTriggers.register();
     }
 
     public static ResourceLocation resource(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }

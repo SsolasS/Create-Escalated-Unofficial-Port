@@ -130,11 +130,11 @@ tasks.shadowJar {
 }
 
 tasks.processResources {
-	properties(listOf("META-INF/mods.toml"),
+	properties(listOf("META-INF/neoforge.mods.toml"),
 		"id" to mod.id,
 		"name" to mod.id,
 		"version" to mod.version,
-		"forge_version" to common.mod.dep("forge_loader_version").substringBefore("."), // only specify major version of forge
+		"forge_version" to common.mod.dep("neoforge_loader_version").substringBefore("."), // only specify major version of forge
 		"minecraft_version" to minecraftVersion,
 		"create_version" to mod.dep("create_forge_version").substringBefore("-"),
 	)

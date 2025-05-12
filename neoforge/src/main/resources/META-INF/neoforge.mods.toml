@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[${forge_version},)"
+loaderVersion = "*"
 issueTrackerURL = "https://github.com/Create-In-Locomotion/Create-Escalated/issues"
 license = "MIT"
 
@@ -16,13 +16,6 @@ Textures and models by rbasamoyai
 logoFile = "icon.png"
 
 [[dependencies.escalated]]
-modId = "forge"
-mandatory = true
-versionRange = "[${forge_version},)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.escalated]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft_version}"
@@ -35,3 +28,9 @@ mandatory=true
 versionRange="${create_version}"
 ordering="NONE"
 side="BOTH"
+
+[[mixins]]
+config = "escalated-common.mixins.json"
+
+[[mixins]]
+config = "escalated.mixins.json"

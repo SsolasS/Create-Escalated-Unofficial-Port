@@ -1,5 +1,6 @@
 package rbasamoyai.escalated.handrails;
 
+import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.utility.BlockHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,6 +8,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -25,6 +27,11 @@ public class WalkwayHandrailBlock extends AbstractHandrailBlock {
 
     public WalkwayHandrailBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return null; // fixme: networking
     }
 
     @Override

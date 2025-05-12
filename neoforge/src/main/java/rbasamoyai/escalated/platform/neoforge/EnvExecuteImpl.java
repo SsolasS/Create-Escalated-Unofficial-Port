@@ -1,12 +1,13 @@
 package rbasamoyai.escalated.platform.neoforge;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 import java.util.function.Supplier;
 
 public class EnvExecuteImpl {
 
-    public static void executeOnClient(Supplier<Runnable> run) { DistExecutor.unsafeRunWhenOn(Dist.CLIENT, run); }
+    public static void executeOnClient(Supplier<Runnable> run) { if (FMLEnvironment.dist == Dist.CLIENT) run.get().run(); }
 
 }

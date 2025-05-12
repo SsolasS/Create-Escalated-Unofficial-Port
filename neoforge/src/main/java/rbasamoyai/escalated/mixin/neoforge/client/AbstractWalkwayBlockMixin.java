@@ -2,7 +2,7 @@ package rbasamoyai.escalated.mixin.neoforge.client;
 
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.render.MultiPosDestructionHandler;
-import net.minecraftforge.client.extensions.common.IClientBlockExtensions;
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import org.spongepowered.asm.mixin.Mixin;
 import rbasamoyai.escalated.walkways.AbstractWalkwayBlock;
 import rbasamoyai.escalated.walkways.neoforge.WalkwayRenderProperties;

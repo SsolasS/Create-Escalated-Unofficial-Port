@@ -3,6 +3,7 @@ package rbasamoyai.escalated.index;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import rbasamoyai.escalated.CreateEscalated;
 
@@ -15,6 +16,8 @@ public class EscalatedDataComponents {
     );
 
     private static <T> DataComponentType<T> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
-        return Registry.register((Registry) Registries.DATA_COMPONENT_TYPE, CreateEscalated.resource(name), builder.apply(DataComponentType.builder()).build());
+        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, CreateEscalated.resource(name), builder.apply(DataComponentType.builder()).build());
     }
+
+    public static void register() {}
 }
