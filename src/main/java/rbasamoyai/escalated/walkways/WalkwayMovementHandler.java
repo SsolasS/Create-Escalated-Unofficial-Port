@@ -121,9 +121,9 @@ public class WalkwayMovementHandler {
         if (!(entity instanceof LivingEntity living) || living.zza == 0 && living.xxa == 0)
             movement = movement.add(centering);
 
-        float step = entity.maxUpStep();
+        /*float step = entity.maxUpStep(); fixme
         if (!isPlayer)
-            entity.setMaxUpStep(1);
+            entity.setMaxUpStep(1);*/
 
         // Entity Collisions
         if (Math.abs(movementSpeed) < .5f) {
@@ -165,7 +165,7 @@ public class WalkwayMovementHandler {
         if (isPlayer && !entity.level().isClientSide) {
             WalkwayTravelTracker.trackPlayerOnWalkway((Player) entity, 300); // 15 seconds
         } else {
-            entity.setMaxUpStep(step);
+            // entity.setMaxUpStep(step); fixme
         }
     }
 

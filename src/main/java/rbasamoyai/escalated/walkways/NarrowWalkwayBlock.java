@@ -8,7 +8,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
@@ -52,24 +54,22 @@ public class NarrowWalkwayBlock extends AbstractWalkwayBlock  {
     @Override public boolean hasWalkwayShaft(BlockState state) { return state.getValue(CAPS) != WalkwayCaps.NO_SHAFT; }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hitResult) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown() || !player.mayBuild())
-            return InteractionResult.PASS;
-        ItemStack heldItem = player.getItemInHand(hand);
-        if (AllBlocks.SHAFT.isIn(heldItem)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (AllBlocks.SHAFT.isIn(stack)) {
             if (state.getValue(CAPS) != WalkwayCaps.NO_SHAFT)
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             if (level.isClientSide)
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             if (!player.isCreative())
-                heldItem.shrink(1);
+                stack.shrink(1);
             KineticBlockEntity.switchToBlockState(level, pos, state.setValue(CAPS, WalkwayCaps.NONE));
             AllBlocks.SHAFT.get().playEncaseSound(level, pos);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
-        return super.use(state, level, pos, player, hand, hitResult);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

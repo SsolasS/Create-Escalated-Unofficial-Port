@@ -12,18 +12,17 @@ subprojects {
 	repositories {
 		mavenCentral()
 		// mappings
-		maven("https://maven.parchmentmc.org")
 		strictMaven("https://maven.parchmentmc.org", "org.parchmentmc.data")
 		strictMaven("https://maven.quiltmc.org/repository/release", "org.quiltmc")
 		// our repo
 		strictMaven("https://maven.realrobotix.me/master/", "com.rbasamoyai", "com.copycatsplus")
 
-		maven("https://maven.shedaniel.me/")
 		maven("https://maven.blamejared.com/")
 		maven("https://maven.tterrag.com/")
 		maven("https://maven.createmod.net/")
         maven("https://maven.minecraftforge.net/")
 		maven("https://maven.neoforged.net/releases/")
+		maven("https://mvn.devos.one/snapshots")
 		strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
 		strictMaven("https://cursemaven.com", "curse.maven")
 		flatDir{

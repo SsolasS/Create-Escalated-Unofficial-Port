@@ -11,7 +11,7 @@ public class EscalatedPonderTags {
     WALKWAYS = CreateEscalated.resource("walkways");
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-        PonderTagRegistrationHelper<RegistryEntry<?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
+        PonderTagRegistrationHelper<RegistryEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
         helper.registerTag(WALKWAYS)
             .item(EscalatedItems.METAL_WALKWAY_STEPS.get(), true, true)
             .title("Walkways and Escalators")

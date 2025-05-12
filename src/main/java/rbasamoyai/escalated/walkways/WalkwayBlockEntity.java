@@ -6,6 +6,7 @@ import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
@@ -287,7 +288,7 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
     @Nullable public DyeColor getColor() { return this.color; }
 
     @Override
-    protected void write(CompoundTag compound, boolean clientPacket) {
+    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         if (this.controller != null)
             compound.put("Controller", NbtUtils.writeBlockPos(this.controller));
         compound.putBoolean("IsController", this.isController());
@@ -302,7 +303,7 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
         if (this.color != null)
             NBTHelper.writeEnum(compound, "Dye", this.color);
 
-        super.write(compound, clientPacket);
+        super.write(compound, registries, clientPacket);
 
         if (!clientPacket)
             return;
@@ -312,22 +313,22 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        super.read(compound, clientPacket);
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
 
         if (compound.getBoolean("IsController")) {
             this.controller = this.worldPosition;
             this.visualProgress = compound.getFloat("VisualProgress");
             this.walkwayWidth = compound.getInt("Width");
             this.widthReferencePos = compound.contains("WidthReferencePos", Tag.TAG_COMPOUND) ?
-                    NbtUtils.readBlockPos(compound.getCompound("WidthReferencePos")) : this.getBlockPos();
+                    NbtUtils.readBlockPos(compound, "WidthReferencePos").get() : this.getBlockPos();
         }
 
         this.color = compound.contains("Dye", Tag.TAG_STRING) ? NBTHelper.readEnum(compound, "Dye", DyeColor.class) : null;
 
         if (!this.wasMoved) {
             if (!this.isController())
-                this.controller = NbtUtils.readBlockPos(compound.getCompound("Controller"));
+                this.controller = NbtUtils.readBlockPos(compound, "Controller").get();
             this.walkwayLength = compound.getInt("Length");
         }
 
@@ -345,8 +346,8 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
     }
 
     @Override
-    public void writeSafe(CompoundTag tag) {
-        super.writeSafe(tag);
+    public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+        super.writeSafe(tag, registries);
         if (this.color != null)
             NBTHelper.writeEnum(tag, "Dye", this.color);
     }

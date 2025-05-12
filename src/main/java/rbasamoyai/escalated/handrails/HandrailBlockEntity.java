@@ -7,6 +7,7 @@ import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.DyeColor;
@@ -95,8 +96,8 @@ public class HandrailBlockEntity extends SmartBlockEntity {
     @Nullable public DyeColor getHandrailColor() { return this.handrailColor; }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         this.width = tag.getInt("Width");
         this.handrailColor = tag.contains("Dye", Tag.TAG_STRING) ? NBTHelper.readEnum(tag, "Dye", DyeColor.class) : null;
 
@@ -105,8 +106,8 @@ public class HandrailBlockEntity extends SmartBlockEntity {
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         tag.putInt("Width", this.width);
         if (this.handrailColor != null)
             NBTHelper.writeEnum(tag, "Dye", this.handrailColor);

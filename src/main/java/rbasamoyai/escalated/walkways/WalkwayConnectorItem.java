@@ -1,9 +1,11 @@
 package rbasamoyai.escalated.walkways;
 
+import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.AbstractSimpleShaftBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
+import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import rbasamoyai.escalated.config.EscalatedConfigs;
 import rbasamoyai.escalated.handrails.AbstractHandrailBlock;
 import rbasamoyai.escalated.handrails.HandrailBlockEntity;
+import rbasamoyai.escalated.index.EscalatedDataComponents;
 import rbasamoyai.escalated.index.EscalatedTriggers;
 
 import java.util.*;
@@ -55,8 +59,9 @@ public class WalkwayConnectorItem extends BlockItem {
     public InteractionResult useOn(UseOnContext context) {
         // Copied from BeltConnectorItem#useOn --ritchie
         Player playerEntity = context.getPlayer();
+        ItemStack heldStack = context.getItemInHand();
         if (playerEntity != null && playerEntity.isShiftKeyDown()) {
-            context.getItemInHand().setTag(null);
+            heldStack.remove(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
             return InteractionResult.SUCCESS;
         }
 
@@ -67,40 +72,44 @@ public class WalkwayConnectorItem extends BlockItem {
         if (level.isClientSide)
             return validAxis ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 
-        CompoundTag tag = context.getItemInHand().getOrCreateTag();
         BlockPos firstTerminal = null;
 
         // Remove first if no longer existent or valid
-        if (tag.contains("FirstTerminal")) {
-            firstTerminal = NbtUtils.readBlockPos(tag.getCompound("FirstTerminal"));
+        if (heldStack.has(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL)) {
+            firstTerminal = heldStack.get(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
             if (!validateAxis(level, firstTerminal) || !firstTerminal.closerThan(pos, maxWalkwayLength() * 2)) {
-                tag.remove("FirstTerminal");
-                context.getItemInHand().setTag(tag);
+                heldStack.remove(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
             }
         }
 
         if (!validAxis || playerEntity == null)
             return InteractionResult.FAIL;
 
-        if (tag.contains("FirstTerminal")) {
-            if (!this.canConnect(level, firstTerminal, pos))
+        if (heldStack.has(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL)) {
+
+            if (!canConnect(level, firstTerminal, pos))
                 return InteractionResult.FAIL;
+
             if (firstTerminal != null && !firstTerminal.equals(pos)) {
                 this.createSteps(level, firstTerminal, pos);
-                EscalatedTriggers.WALKWAY.tryAwardingTo(playerEntity);
+                AllAdvancements.BELT.awardTo(playerEntity);
                 if (!playerEntity.isCreative())
-                    context.getItemInHand().shrink(1);
+                    context.getItemInHand()
+                            .shrink(1);
             }
-            if (!context.getItemInHand().isEmpty()) {
-                context.getItemInHand().setTag(null);
-                playerEntity.getCooldowns().addCooldown(this, 5);
+
+            if (!context.getItemInHand()
+                    .isEmpty()) {
+                heldStack.remove(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
+                playerEntity.getCooldowns()
+                        .addCooldown(this, 5);
             }
             return InteractionResult.SUCCESS;
         }
 
-        tag.put("FirstTerminal", NbtUtils.writeBlockPos(pos));
-        context.getItemInHand().setTag(tag);
-        playerEntity.getCooldowns().addCooldown(this, 5);
+        heldStack.set(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL, pos);
+        playerEntity.getCooldowns()
+                .addCooldown(this, 5);
         return InteractionResult.SUCCESS;
     }
 

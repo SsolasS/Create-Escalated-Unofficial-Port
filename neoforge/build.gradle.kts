@@ -18,13 +18,13 @@ val ci = System.getenv("CI")?.toBoolean() ?: false
 val release = System.getenv("RELEASE")?.toBoolean() ?: false
 val nightly = ci && !release
 val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
-version = "${mod.version}+create.6.0.4-mc.${minecraftVersion}-forge${if (nightly) "-build.${buildNumber}" else ""}${if (ci) "" else "-dev"}"
+version = "${mod.version}+create.6.0.4-mc.${minecraftVersion}-neoforge${if (nightly) "-build.${buildNumber}" else ""}${if (ci) "" else "-dev"}"
 group = "${mod.group}.$loader"
 base.archivesName.set(mod.id)
 
 architectury {
 	platformSetupLoomIde()
-	forge()
+	neoForge()
 }
 
 val commonBundle: Configuration by configurations.creating {
@@ -40,17 +40,12 @@ val shadowBundle: Configuration by configurations.creating {
 configurations {
 	compileClasspath.get().extendsFrom(commonBundle)
 	runtimeClasspath.get().extendsFrom(commonBundle)
-	get("developmentForge").extendsFrom(commonBundle)
+	get("developmentNeoForge").extendsFrom(commonBundle)
 }
 
 loom {
 	silentMojangMappingsLicense()
 	accessWidenerPath = common.loom.accessWidenerPath
-	forge.convertAccessWideners = true
-	forge.mixinConfigs(
-		"escalated-common.mixins.json",
-		"escalated.mixins.json",
-	)
 
 	runConfigs.all {
 		isIdeConfigGenerated = true
@@ -60,6 +55,7 @@ loom {
 }
 
 repositories {
+	strictMaven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/", "fuzs.forgeconfigapiport")
 }
 
 dependencies {
@@ -68,33 +64,33 @@ dependencies {
 		officialMojangMappings { nameSyntheticMembers = false }
 		parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${mod.dep("parchment_version")}@zip")
 	})
-	forge("net.minecraftforge:forge:$minecraftVersion-${common.mod.dep("forge_loader_version")}")
+	"neoForge"("net.neoforged:neoforge:${common.mod.dep("neoforge_loader_version")}")
 
-	"io.github.llamalad7:mixinextras-forge:${mod.dep("mixinextras_version")}".let {
+	"io.github.llamalad7:mixinextras-neoforge:${mod.dep("mixinextras_version")}".let {
 		annotationProcessor(it)
 		implementation(it)
 	}
 
 	// Create and its dependencies
 	modImplementation("com.simibubi.create:create-${minecraftVersion}:${mod.dep("create_forge_version")}:slim") { isTransitive = false }
-	modImplementation("net.createmod.ponder:Ponder-Forge-${minecraftVersion}:${mod.dep("ponder_forge_version")}")
-	modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${minecraftVersion}:${mod.dep("flywheel_forge_version")}")
-    modRuntimeOnly("dev.engine-room.flywheel:flywheel-forge-${minecraftVersion}:${mod.dep("flywheel_forge_version")}")
+	modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraftVersion}:${mod.dep("ponder_forge_version")}")
+	modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${mod.dep("flywheel_forge_version")}")
+    modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${mod.dep("flywheel_forge_version")}")
 	modImplementation("com.tterrag.registrate:Registrate:${mod.dep("registrate_forge_version")}")
 
 	// Development QOL
-	modLocalRuntime("mezz.jei:jei-${minecraftVersion}-forge:${mod.dep("jei_version")}") { isTransitive = false }
+	modLocalRuntime("mezz.jei:jei-${minecraftVersion}-neoforge:${mod.dep("jei_version")}") { isTransitive = false }
 
 	// if you would like to add integration with JEI, uncomment this line.
-	modCompileOnly("mezz.jei:jei-${minecraftVersion}-forge-api:${mod.dep("jei_version")}")
+	modCompileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${mod.dep("jei_version")}")
 
 	//modImplementation("curse.maven:spark-361579:${mod.dep("spark_forge_file")}") // Spark
 
 	compileOnly("io.github.llamalad7:mixinextras-common:${mod.dep("mixinextras_version")}")
-	annotationProcessor(include("io.github.llamalad7:mixinextras-forge:${mod.dep("mixinextras_version")}"){})
+	annotationProcessor(include("io.github.llamalad7:mixinextras-neoforge:${mod.dep("mixinextras_version")}"){})
 
 	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
-	shadowBundle(project(common.path, "transformProductionForge")) { isTransitive = false }
+	shadowBundle(project(common.path, "transformProductionNeoForge")) { isTransitive = false }
 }
 
 java {

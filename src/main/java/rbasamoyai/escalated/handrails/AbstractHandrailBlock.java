@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -98,25 +99,24 @@ public abstract class AbstractHandrailBlock extends HorizontalDirectionalBlock i
     @Override public FluidState getFluidState(BlockState blockState) { return this.fluidState(blockState); }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown() || !player.mayBuild())
-            return InteractionResult.PASS;
-        ItemStack heldItem = player.getItemInHand(hand);
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        boolean isDye = WalkwayHelper.isDye(heldItem);
-        boolean hasWater = WalkwayHelper.hasWater(level, heldItem);
+        boolean isDye = WalkwayHelper.isDye(stack);
+        boolean hasWater = WalkwayHelper.hasWater(level, stack);
 
         if (isDye || hasWater)
-            return onBlockEntityUse(level, pos, be -> be.setHandrailColor(WalkwayHelper.getDyeColorFromItem(heldItem))
-                    ? InteractionResult.SUCCESS : InteractionResult.PASS);
+            return onBlockEntityUseItemOn(level, pos, be -> be.setHandrailColor(WalkwayHelper.getDyeColorFromItem(stack))
+                    ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
 
-        boolean isGlass = heldItem.is(Blocks.GLASS.asItem());
+        boolean isGlass = stack.is(Blocks.GLASS.asItem());
         if (isGlass && this.canConvertToGlassHandrail()) {
             this.convertToGlass(state, level, pos);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
-        return super.use(state, level, pos, player, hand, hitResult);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     protected void convertToGlass(BlockState state, Level level, BlockPos pos) {

@@ -19,6 +19,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+import rbasamoyai.escalated.index.EscalatedDataComponents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +44,21 @@ public class WalkwayConnectorHandler {
 		for (InteractionHand hand : InteractionHand.values()) {
 			ItemStack heldItem = player.getItemInHand(hand);
 
-			if (!(heldItem.getItem() instanceof WalkwayConnectorItem walkwayItem) || !heldItem.hasTag())
-				continue;
-			CompoundTag tag = heldItem.getTag();
-			if (!tag.contains("FirstTerminal"))
+			if (!(heldItem.getItem() instanceof WalkwayConnectorItem walkwayItem))
 				continue;
 
-			BlockPos first = NbtUtils.readBlockPos(tag.getCompound("FirstTerminal"));
-			BlockState firstState = level.getBlockState(first);
+			if (!heldItem.has(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL))
+				continue;
 
-			Direction.Axis axis = Direction.Axis.Y;
+			BlockPos firstPos = heldItem.get(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
+
+			if (!level.getBlockState(firstPos)
+					.hasProperty(BlockStateProperties.AXIS))
+				continue;
+
+			BlockState firstState = level.getBlockState(firstPos);
+
+			Axis axis = Axis.Y;
 			if (ShaftBlock.isShaft(firstState)) {
 				axis = firstState.getValue(BlockStateProperties.AXIS);
 			} else if (firstState.getBlock() instanceof KineticBlock kinetic && kinetic instanceof WalkwayBlock) {
@@ -65,8 +71,8 @@ public class WalkwayConnectorHandler {
 			if (rayTrace == null || !(rayTrace instanceof BlockHitResult)) {
 				if (RANDOM.nextInt(50) == 0) {
 					level.addParticle(new DustParticleOptions(new Vector3f(.3f, .9f, .5f), 1),
-						first.getX() + .5f + randomOffset(.25f), first.getY() + .5f + randomOffset(.25f),
-						first.getZ() + .5f + randomOffset(.25f), 0, 0, 0);
+						firstPos.getX() + .5f + randomOffset(.25f), firstPos.getY() + .5f + randomOffset(.25f),
+						firstPos.getZ() + .5f + randomOffset(.25f), 0, 0, 0);
 				}
 				return;
 			}
@@ -78,23 +84,23 @@ public class WalkwayConnectorHandler {
 				return;
 			if (!ShaftBlock.isShaft(secondState) && !(secondState.getBlock() instanceof WalkwayBlock))
 				selected = selected.relative(((BlockHitResult) rayTrace).getDirection());
-			boolean escalator = selected.getY() - first.getY() != 0;
+			boolean escalator = selected.getY() - firstPos.getY() != 0;
 
-			if (!escalator && !selected.closerThan(first, walkwayItem.maxWalkwayLength())
-				|| escalator && Math.abs(selected.getY() - first.getY()) > walkwayItem.maxEscalatorHeight())
+			if (!escalator && !selected.closerThan(firstPos, walkwayItem.maxWalkwayLength())
+				|| escalator && Math.abs(selected.getY() - firstPos.getY()) > walkwayItem.maxEscalatorHeight())
 				return;
 
-			boolean canConnect = WalkwayConnectorItem.validateAxis(level, selected) && walkwayItem.canConnect(level, first, selected);
-			BlockPos diffPos = selected.subtract(first);
+			boolean canConnect = WalkwayConnectorItem.validateAxis(level, selected) && walkwayItem.canConnect(level, firstPos, selected);
+			BlockPos diffPos = selected.subtract(firstPos);
 			boolean extendingWalkway = Math.abs(axis.choose(diffPos.getX(), diffPos.getY(), diffPos.getZ())) == 1;
 
-			Vec3 start = Vec3.atLowerCornerOf(first);
+			Vec3 start = Vec3.atLowerCornerOf(firstPos);
 			Vec3 end = Vec3.atLowerCornerOf(selected);
 			Vec3 diff = end.subtract(start);
 			if (extendingWalkway) {
 				List<BlockPos> list = new ArrayList<>();
 				Vec3 extensionOffset = new Vec3(axis.choose(diffPos.getX(), 0, 0), 0, axis.choose(0, 0, diffPos.getZ()));
-				if (level.getBlockEntity(first) instanceof WalkwayBlockEntity walkwayBE) {
+				if (level.getBlockEntity(firstPos) instanceof WalkwayBlockEntity walkwayBE) {
 					list = walkwayBE.getAllBlocks();
 				} else if (level.getBlockEntity(selected) instanceof WalkwayBlockEntity walkwayBE) {
 					list = walkwayBE.getAllBlocks();

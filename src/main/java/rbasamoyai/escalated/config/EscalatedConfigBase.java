@@ -1,10 +1,10 @@
 package rbasamoyai.escalated.config;
 
 import net.createmod.catnip.config.ConfigBase;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public abstract class EscalatedConfigBase extends ConfigBase {
 
-    @Override public void registerAll(final ForgeConfigSpec.Builder builder) { super.registerAll(builder); }
+    @Override public void registerAll(final ModConfigSpec.Builder builder) { super.registerAll(builder); }
 
 }

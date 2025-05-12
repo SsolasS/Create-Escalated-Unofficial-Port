@@ -1,8 +1,8 @@
 package rbasamoyai.escalated.config;
 
 import net.createmod.catnip.config.ConfigBase;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.EnumMap;
@@ -24,7 +24,7 @@ public class EscalatedConfigs {
     }
 
     private static <T extends EscalatedConfigBase> T register(Supplier<T> factory, ModConfig.Type side) {
-        Pair<T, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(builder -> {
+        Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
             T config = factory.get();
             config.registerAll(builder);
             return config;
@@ -36,7 +36,7 @@ public class EscalatedConfigs {
         return config;
     }
 
-    public static void registerConfigs(BiConsumer<ModConfig.Type, ForgeConfigSpec> cons) {
+    public static void registerConfigs(BiConsumer<ModConfig.Type, ModConfigSpec> cons) {
         SERVER = register(EscalatedServerCfg::new, ModConfig.Type.SERVER);
 
         for (Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())

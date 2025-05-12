@@ -29,7 +29,7 @@ public class CreateEscalated {
         EscalatedTriggers.register();
     }
 
-    public static ResourceLocation resource(String path) { return new ResourceLocation(MOD_ID, path); }
+    public static ResourceLocation resource(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
 
     public static void onServerTick(MinecraftServer server) {
         WalkwayTravelTracker.tick();

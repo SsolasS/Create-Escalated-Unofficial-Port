@@ -15,7 +15,7 @@ public class EscalatedTriggers {
 
     private static SimpleEscalatedTrigger add(String id) {
         SimpleEscalatedTrigger trigger = new SimpleEscalatedTrigger(id);
-        CriteriaTriggers.register(trigger);
+        CriteriaTriggers.register("escalated_trigger", trigger);
         return trigger;
     }
 

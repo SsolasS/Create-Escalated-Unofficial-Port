@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -325,24 +326,22 @@ public abstract class AbstractWalkwayBlock extends HorizontalKineticBlock implem
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hitResult) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown() || !player.mayBuild())
-            return InteractionResult.PASS;
-        ItemStack heldItem = player.getItemInHand(hand);
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        boolean isDye = WalkwayHelper.isDye(heldItem);
-        boolean hasWater = WalkwayHelper.hasWater(level, heldItem);
+        boolean isDye = WalkwayHelper.isDye(stack);
+        boolean hasWater = WalkwayHelper.hasWater(level, stack);
 
         if (isDye || hasWater)
-            return onBlockEntityUse(level, pos, be -> be.applyColor(WalkwayHelper.getDyeColorFromItem(heldItem))
-                    ? InteractionResult.SUCCESS : InteractionResult.PASS);
+            return onBlockEntityUseItemOn(level, pos, be -> be.applyColor(WalkwayHelper.getDyeColorFromItem(stack))
+                    ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
 
-        boolean isBelt = WalkwayHelper.isHandrail(heldItem);
+        boolean isBelt = WalkwayHelper.isHandrail(stack);
         if (isBelt)
-            return placeHandrail(level, state, pos, player, heldItem) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return placeHandrail(level, state, pos, player, stack) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        return super.use(state, level, pos, player, hand, hitResult);
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     protected boolean placeHandrail(Level level, BlockState state, BlockPos pos, Player player, ItemStack itemStack) {
