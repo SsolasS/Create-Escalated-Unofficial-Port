@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[${forge_version},)"
+issueTrackerURL = "https://github.com/Create-In-Locomotion/Create-Escalated/issues"
+license = "MIT"
+
+[[mods]]
+modId = "escalated"
+version = "${version}"
+displayName = "Create: Escalated"
+authors = "rbasmoyai"
+description = """Bringing you to higher places in your Create mod builds
+Attributions:
+Logo by LopyLuna
+Textures and models by rbasamoyai
+"""
+logoFile = "icon.png"
+
+[[dependencies.escalated]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.escalated]]
+modId = "minecraft"
+mandatory = true
+versionRange = "${minecraft_version}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.escalated]]
+modId="create"
+mandatory=true
+versionRange="${create_version}"
+ordering="NONE"
+side="BOTH"
