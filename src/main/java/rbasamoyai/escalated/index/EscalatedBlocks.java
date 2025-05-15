@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import rbasamoyai.escalated.ModGroup;
 import rbasamoyai.escalated.datagen.EscalatedBuilderTransformers;
 import rbasamoyai.escalated.handrails.EscalatorHandrailBlock;
 import rbasamoyai.escalated.handrails.WalkwayHandrailBlock;
@@ -20,8 +19,6 @@ import rbasamoyai.escalated.walkways.*;
 import static rbasamoyai.escalated.CreateEscalated.REGISTRATE;
 
 public class EscalatedBlocks {
-
-	static { ModGroup.useModTab(ModGroup.MAIN_TAB_KEY); }
 
 	//////// Metal walkway blocks ////////
 	public static final BlockEntry<WalkwayTerminalBlock> METAL_WALKWAY_TERMINAL = REGISTRATE

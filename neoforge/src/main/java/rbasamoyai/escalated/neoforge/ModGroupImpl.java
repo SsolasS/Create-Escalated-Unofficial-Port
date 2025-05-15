@@ -33,8 +33,8 @@ public class ModGroupImpl {
 		TAB_REGISTER.register(modBus);
 	}
 
-	public static void useModTab(ResourceKey<CreativeModeTab> key) {
-		CreateEscalated.REGISTRATE.setCreativeTab(TABS.get(key));
+	public static void setDefaultTabToNull() {
+		CreateEscalated.REGISTRATE.defaultCreativeTab((ResourceKey<CreativeModeTab>) null);
 	}
 
 }

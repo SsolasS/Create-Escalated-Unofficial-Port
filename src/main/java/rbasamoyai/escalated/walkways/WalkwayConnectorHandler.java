@@ -4,11 +4,8 @@ import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,18 +41,11 @@ public class WalkwayConnectorHandler {
 		for (InteractionHand hand : InteractionHand.values()) {
 			ItemStack heldItem = player.getItemInHand(hand);
 
-			if (!(heldItem.getItem() instanceof WalkwayConnectorItem walkwayItem))
-				continue;
-
-			if (!heldItem.has(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL))
+			if (!(heldItem.getItem() instanceof WalkwayConnectorItem walkwayItem)
+				|| !heldItem.has(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL))
 				continue;
 
 			BlockPos firstPos = heldItem.get(EscalatedDataComponents.WALKWAY_FIRST_TERMINAL);
-
-			if (!level.getBlockState(firstPos)
-					.hasProperty(BlockStateProperties.AXIS))
-				continue;
-
 			BlockState firstState = level.getBlockState(firstPos);
 
 			Axis axis = Axis.Y;

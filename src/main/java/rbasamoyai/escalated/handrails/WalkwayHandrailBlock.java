@@ -19,9 +19,12 @@ import rbasamoyai.escalated.index.EscalatedShapes;
 import rbasamoyai.escalated.walkways.WalkwayBlock;
 import rbasamoyai.escalated.walkways.WalkwaySlope;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public class WalkwayHandrailBlock extends AbstractHandrailBlock {
+
+    public static final MapCodec<WalkwayHandrailBlock> CODEC = simpleCodec(WalkwayHandrailBlock::new);
 
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
 
@@ -30,9 +33,8 @@ public class WalkwayHandrailBlock extends AbstractHandrailBlock {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-        return null; // fixme: networking
-    }
+    @Nonnull
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() { return CODEC; }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

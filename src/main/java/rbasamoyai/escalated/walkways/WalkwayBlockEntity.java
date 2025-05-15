@@ -30,7 +30,7 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
     public Map<Entity, TransportedEntityInfo> passengers;
     public int walkwayLength;
     public int walkwayWidth = 1;
-    protected BlockPos controller;
+    @Nullable protected BlockPos controller;
     protected BlockPos widthReferencePos;
     public float visualProgress = 0;
     protected int updateCount = 0;
@@ -320,15 +320,14 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
             this.controller = this.worldPosition;
             this.visualProgress = compound.getFloat("VisualProgress");
             this.walkwayWidth = compound.getInt("Width");
-            this.widthReferencePos = compound.contains("WidthReferencePos", Tag.TAG_COMPOUND) ?
-                    NbtUtils.readBlockPos(compound, "WidthReferencePos").get() : this.getBlockPos();
+            this.widthReferencePos = NbtUtils.readBlockPos(compound, "WidthReferencePos").orElse(this.getBlockPos());
         }
 
         this.color = compound.contains("Dye", Tag.TAG_STRING) ? NBTHelper.readEnum(compound, "Dye", DyeColor.class) : null;
 
         if (!this.wasMoved) {
             if (!this.isController())
-                this.controller = NbtUtils.readBlockPos(compound, "Controller").get();
+                this.controller = NbtUtils.readBlockPos(compound, "Controller").orElse(null);
             this.walkwayLength = compound.getInt("Length");
         }
 
@@ -338,7 +337,7 @@ public class WalkwayBlockEntity extends KineticBlockEntity {
         if (this.isController()) {
             this.lazyResetClientRender = true;
             float speed = this.getWalkwayMovementSpeed();
-            this.visualProgress += speed * 1f;
+            this.visualProgress += speed;
             if (Math.abs(this.visualProgress) > 0.5f) // reset offset
                 this.visualProgress = Math.signum(this.visualProgress) * (Math.abs(this.visualProgress) % 0.5f);
         }

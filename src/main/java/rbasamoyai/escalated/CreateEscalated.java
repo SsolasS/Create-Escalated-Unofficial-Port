@@ -3,14 +3,12 @@ package rbasamoyai.escalated;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rbasamoyai.escalated.advancements.WalkwayTravelTracker;
 import rbasamoyai.escalated.index.EscalatedBlockEntities;
 import rbasamoyai.escalated.index.EscalatedBlocks;
 import rbasamoyai.escalated.index.EscalatedItems;
-import rbasamoyai.escalated.index.EscalatedTriggers;
 
 public class CreateEscalated {
 
@@ -22,6 +20,7 @@ public class CreateEscalated {
 
     public static void init() {
         ModGroup.register();
+        ModGroup.setDefaultTabToNull();
 
         EscalatedBlocks.register();
         EscalatedItems.register();
