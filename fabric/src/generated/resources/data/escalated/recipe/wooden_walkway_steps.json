@@ -15,7 +15,7 @@
     "CPC"
   ],
   "result": {
-    "item": "escalated:wooden_walkway_steps"
+    "id": "escalated:wooden_walkway_steps"
   },
   "show_notification": true
 }

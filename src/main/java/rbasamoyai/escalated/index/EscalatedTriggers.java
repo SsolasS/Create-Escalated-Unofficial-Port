@@ -1,6 +1,8 @@
 package rbasamoyai.escalated.index;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import rbasamoyai.escalated.CreateEscalated;
 import rbasamoyai.escalated.advancements.SimpleEscalatedTrigger;
 
 public class EscalatedTriggers {
@@ -15,7 +17,7 @@ public class EscalatedTriggers {
 
     private static SimpleEscalatedTrigger add(String id) {
         SimpleEscalatedTrigger trigger = new SimpleEscalatedTrigger(id);
-        CriteriaTriggers.register("escalated_trigger", trigger);
+        Registry.register(BuiltInRegistries.TRIGGER_TYPES, CreateEscalated.resource(id), trigger);
         return trigger;
     }
 

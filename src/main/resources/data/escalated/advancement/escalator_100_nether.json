@@ -15,7 +15,7 @@
     "frame": "challenge",
     "hidden": true,
     "icon": {
-      "item": "minecraft:bedrock"
+      "id": "minecraft:bedrock"
     },
     "show_toast": true,
     "title": {

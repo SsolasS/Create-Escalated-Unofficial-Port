@@ -1,17 +1,13 @@
 package rbasamoyai.escalated.walkways;
 
-import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.kinetics.base.KineticBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.AbstractSimpleShaftBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
-import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.block.ProperWaterloggedBlock;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -92,7 +88,7 @@ public class WalkwayConnectorItem extends BlockItem {
 
             if (firstTerminal != null && !firstTerminal.equals(pos)) {
                 this.createSteps(level, firstTerminal, pos);
-                AllAdvancements.BELT.awardTo(playerEntity);
+                EscalatedTriggers.WALKWAY.tryAwardingTo(playerEntity);
                 if (!playerEntity.isCreative())
                     context.getItemInHand()
                             .shrink(1);

@@ -6,7 +6,7 @@
       "item": "minecraft:chain"
     },
     "P": {
-      "tag": "c:iron_plates"
+      "tag": "minecraft:wooden_slabs"
     }
   },
   "pattern": [
@@ -15,7 +15,7 @@
     "CPC"
   ],
   "result": {
-    "item": "escalated:metal_walkway_steps"
+    "id": "escalated:wooden_walkway_steps"
   },
   "show_notification": true
 }

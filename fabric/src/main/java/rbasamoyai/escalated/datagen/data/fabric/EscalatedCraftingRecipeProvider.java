@@ -45,7 +45,7 @@ public class EscalatedCraftingRecipeProvider {
 
     private static TagKey<Item> getMetalPlateTag() {
         ResourceLocation loc = isForge() ? new ResourceLocation("forge", "plates/iron")
-                : new ResourceLocation("c", "iron_plates"); // TODO change for 1.21 to c:iron_plates
+                : new ResourceLocation("c", "plates/iron"); // TODO change for 1.21 to c:plates/iron
         return TagKey.create(Registries.ITEM, loc);
     }
 

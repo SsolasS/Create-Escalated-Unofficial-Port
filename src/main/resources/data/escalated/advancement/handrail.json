@@ -15,7 +15,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "create:belt_connector"
+      "id": "create:belt_connector"
     },
     "show_toast": true,
     "title": {

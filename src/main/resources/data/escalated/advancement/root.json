@@ -1,7 +1,6 @@
 {
   "criteria": {
     "0": {
-      "conditions": {},
       "trigger": "minecraft:inventory_changed"
     }
   },
@@ -15,7 +14,7 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "escalated:metal_walkway_steps"
+      "id": "escalated:metal_walkway_steps"
     },
     "show_toast": false,
     "title": {
