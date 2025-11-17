@@ -1,7 +1,7 @@
 plugins {
 	`maven-publish`
 	id("dev.kikugie.stonecutter")
-	id("dev.architectury.loom") version "1.9.+" apply false
+	id("dev.architectury.loom") version "1.13.+" apply false
 	id("architectury-plugin") version "3.4.+" apply false
 	id("com.gradleup.shadow") version "8.3.5" apply false
 }

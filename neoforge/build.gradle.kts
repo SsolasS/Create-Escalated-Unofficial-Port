@@ -18,7 +18,7 @@ val ci = System.getenv("CI")?.toBoolean() ?: false
 val release = System.getenv("RELEASE")?.toBoolean() ?: false
 val nightly = ci && !release
 val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
-version = "${mod.version}+create.6.0.6-mc.${minecraftVersion}-neoforge${if (nightly) "-build.${buildNumber}" else ""}${if (ci) "" else "-dev"}"
+version = "${mod.version}+create.6.0.8-mc.${minecraftVersion}-neoforge${if (nightly) "-build.${buildNumber}" else ""}${if (ci) "" else "-dev"}"
 group = "${mod.group}.$loader"
 base.archivesName.set(mod.id)
 
@@ -66,11 +66,6 @@ dependencies {
 	})
 	"neoForge"("net.neoforged:neoforge:${common.mod.dep("neoforge_loader_version")}")
 
-	"io.github.llamalad7:mixinextras-neoforge:${mod.dep("mixinextras_version")}".let {
-		annotationProcessor(it)
-		implementation(it)
-	}
-
 	// Create and its dependencies
 	modImplementation("com.simibubi.create:create-${minecraftVersion}:${mod.dep("create_forge_version")}:slim") { isTransitive = false }
 	modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraftVersion}:${mod.dep("ponder_forge_version")}")
@@ -85,9 +80,6 @@ dependencies {
 	modCompileOnly("mezz.jei:jei-${minecraftVersion}-neoforge-api:${mod.dep("jei_version")}")
 
 	//modImplementation("curse.maven:spark-361579:${mod.dep("spark_forge_file")}") // Spark
-
-	compileOnly("io.github.llamalad7:mixinextras-common:${mod.dep("mixinextras_version")}")
-	annotationProcessor(include("io.github.llamalad7:mixinextras-neoforge:${mod.dep("mixinextras_version")}"){})
 
 	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
 	shadowBundle(project(common.path, "transformProductionNeoForge")) { isTransitive = false }
