@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import rbasamoyai.escalated.config.EscalatedConfigs;
 import rbasamoyai.escalated.handrails.AbstractHandrailBlock;
 import rbasamoyai.escalated.handrails.HandrailBlockEntity;
@@ -34,6 +35,7 @@ import rbasamoyai.escalated.index.EscalatedTriggers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractWalkwayBlock extends HorizontalKineticBlock implements IBE<WalkwayBlockEntity>, WalkwayBlock {
 
@@ -43,6 +45,11 @@ public abstract class AbstractWalkwayBlock extends HorizontalKineticBlock implem
     protected AbstractWalkwayBlock(Properties properties, NonNullSupplier<WalkwaySet> walkwaySetSupplier) {
         super(properties);
         this.walkwaySetSupplier = walkwaySetSupplier;
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientBlockExtensions> consumer) {
+        consumer.accept(new WalkwayRenderProperties());
     }
 
     @Override public Direction getFacing(BlockState state) { return state.getValue(HORIZONTAL_FACING); }
