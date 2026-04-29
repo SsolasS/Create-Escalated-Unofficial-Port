@@ -15,9 +15,9 @@ public class EscalatedBuilderTransformers {
 
     public static <T extends Block, P> NonNullUnaryOperator<BlockBuilder<T, P>> walkwayTerminal(String material) {
         ResourceLocation noneLoc = CreateEscalated.resource("walkway_terminal");
-        ResourceLocation leftLoc = CreateEscalated.resource("walkway_terminal_left_cap");
-        ResourceLocation rightLoc = CreateEscalated.resource("walkway_terminal_right_cap");
-        ResourceLocation bothLoc = CreateEscalated.resource("walkway_terminal_both_cap");
+        ResourceLocation leftLoc = CreateEscalated.resource("walkway_terminal_left");
+        ResourceLocation rightLoc = CreateEscalated.resource("walkway_terminal_right");
+        ResourceLocation bothLoc = CreateEscalated.resource("walkway_terminal_both");
         return b -> b.blockstate((c, p) -> p.horizontalBlock(c.get(), state -> {
             WalkwayCaps cap = state.getValue(WalkwayBlock.CAPS_SHAFT);
             ResourceLocation loc = switch (cap) {
@@ -35,10 +35,10 @@ public class EscalatedBuilderTransformers {
     }
 
     public static <T extends Block, P> NonNullUnaryOperator<BlockBuilder<T, P>> narrowWalkway(String material) {
-        ResourceLocation noneLoc = CreateEscalated.resource(material + "_narrow_walkway");
-        ResourceLocation leftLoc = CreateEscalated.resource(material + "_narrow_walkway_left_cap");
-        ResourceLocation rightLoc = CreateEscalated.resource(material + "_narrow_walkway_right_cap");
-        ResourceLocation bothLoc = CreateEscalated.resource(material + "_narrow_walkway_both_cap");
+        ResourceLocation noneLoc = CreateEscalated.resource("narrow_walkway");
+        ResourceLocation leftLoc = CreateEscalated.resource("narrow_walkway_left");
+        ResourceLocation rightLoc = CreateEscalated.resource("narrow_walkway_right");
+        ResourceLocation bothLoc = CreateEscalated.resource("narrow_walkway_both");
         return b -> b.blockstate((c, p) -> p.horizontalBlock(c.get(), state -> {
             WalkwayCaps cap = state.getValue(WalkwayBlock.CAPS);
             ResourceLocation loc = switch (cap) {
@@ -78,7 +78,7 @@ public class EscalatedBuilderTransformers {
     }
 
     public static <T extends Block, P> NonNullUnaryOperator<BlockBuilder<T, P>> wideWalkwayCenter(String material) {
-        ResourceLocation centerLoc = CreateEscalated.resource("wide_walkway_side_center");
+        ResourceLocation centerLoc = CreateEscalated.resource("wide_walkway_center");
         return b -> b.blockstate((c, p) -> p.horizontalBlock(c.get(), p.models().withExistingParent(c.getName(), centerLoc)
                 .texture("bottom", "block/" + material + "_walkway_bottom")
                 .texture("side", "block/" + material + "_walkway_side")));
