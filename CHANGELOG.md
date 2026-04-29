@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.1] - Unreleased
+## [1.2.1] - 2026-01-07
 
 Create: Escalated now supports Create v6.0.8.1 on Fabric 1.20.1.
 
