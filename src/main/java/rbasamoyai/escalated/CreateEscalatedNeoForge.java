@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import rbasamoyai.escalated.compat.sable.SableCompat;
 import rbasamoyai.escalated.config.EscalatedConfigs;
 import rbasamoyai.escalated.index.EscalatedDataComponents;
 import rbasamoyai.escalated.index.EscalatedTriggers;
@@ -33,6 +34,8 @@ public class CreateEscalatedNeoForge {
 
         forgeBus.addListener(this::onServerTick);
         forgeBus.addListener(this::onServerStopping);
+
+        EscalatedModsNeoForge.SABLE.executeIfInstalled(() -> () -> SableCompat.register());
     }
 
 

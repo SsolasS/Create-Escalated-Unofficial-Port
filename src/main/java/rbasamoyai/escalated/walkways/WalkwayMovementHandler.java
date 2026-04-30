@@ -1,5 +1,6 @@
 package rbasamoyai.escalated.walkways;
 
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -19,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import rbasamoyai.escalated.advancements.WalkwayTravelTracker;
 
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.core.Direction.AxisDirection.NEGATIVE;
 import static net.minecraft.core.Direction.AxisDirection.POSITIVE;
@@ -77,8 +79,10 @@ public class WalkwayMovementHandler {
         if (Math.abs(walkwayBE.getSpeed()) < 1 || !walkwayBlock.movesEntities(blockState))
             return;
 
+        Vec3 entityPos = getEntityPos(entity, walkwayBE);
+        double entityY = entityPos.y;
         // Not on top
-        if (entity.getY() + 0.25f < pos.getY())
+        if (entityY + 0.25d < pos.getY())
             return;
 
         // Lock entities in place
@@ -95,13 +99,13 @@ public class WalkwayMovementHandler {
         Vec3i centeringDirection = Direction.get(POSITIVE, walkwayFacing.getClockWise().getAxis()).getNormal();
         Vec3 movement = Vec3.atLowerCornerOf(movementDirection.getNormal()).scale(movementSpeed);
 
-        double diffCenter = axis == Direction.Axis.Z ? (pos.getX() + .5f - entity.getX()) : (pos.getZ() + .5f - entity.getZ());
-        if (Math.abs(diffCenter) > 48 / 64f)
+        double diffCenter = axis == Direction.Axis.Z ? (pos.getX() + .5d - entityPos.x) : (pos.getZ() + .5d - entityPos.z);
+        if (Math.abs(diffCenter) > 48 / 64d)
             return;
 
-        float top = 15.5f / 16f;
-        boolean onSlope = slope == WalkwaySlope.MIDDLE || slope == WalkwaySlope.TOP && entity.getY() - pos.getY() < top
-                || slope == WalkwaySlope.BOTTOM && entity.getY() - pos.getY() > top;
+        double top = 15.5d / 16d;
+        boolean onSlope = slope == WalkwaySlope.MIDDLE || slope == WalkwaySlope.TOP && entityY - pos.getY() < top
+                || slope == WalkwaySlope.BOTTOM && entityY - pos.getY() > top;
 
         boolean movingDown = onSlope && movementFacing != walkwayFacing;
         boolean movingUp = onSlope && movementFacing == walkwayFacing;
@@ -117,7 +121,7 @@ public class WalkwayMovementHandler {
         if (movingDown)
             movement = movement.add(0, -Math.abs(axis.choose(movement.x, movement.y, movement.z)), 0);
 
-        Vec3 centering = Vec3.atLowerCornerOf(centeringDirection).scale(diffCenter * Math.min(Math.abs(movementSpeed), .1f) * 4);
+        Vec3 centering = Vec3.atLowerCornerOf(centeringDirection).scale(diffCenter * Math.min(Math.abs(movementSpeed), .1d) * 4);
 
         if (!(entity instanceof LivingEntity living) || living.zza == 0 && living.xxa == 0)
             movement = movement.add(centering);
@@ -130,7 +134,7 @@ public class WalkwayMovementHandler {
         }
 
         // Entity Collisions
-        if (Math.abs(movementSpeed) < .5f) {
+        if (Math.abs(movementSpeed) < .5d) {
             Vec3 checkDistance = movement.normalize()
                     .scale(0.5);
             AABB bb = entity.getBoundingBox();
@@ -150,17 +154,17 @@ public class WalkwayMovementHandler {
 
         if (movingUp) {
             Vec3 prevPos = entity.position();
-            entity.move(SELF, movement);
+            entity.move(SELF, transformMovement(movement, walkwayBE));
             if (entity.horizontalCollision) {
                 entity.setPos(prevPos); // Restore position and try again, but with adjusted starting condition
-                entity.move(SELF, new Vec3(0, movement.y * 0.1, 0)); // adjusted
-                entity.move(SELF, movement);
+                entity.move(SELF, transformMovement(new Vec3(0, movement.y * 0.1, 0), walkwayBE)); // adjusted
+                entity.move(SELF, transformMovement(movement, walkwayBE));
             }
         } else if (movingDown) {
-            entity.move(SELF, movement.multiply(1, 0, 1));
-            entity.move(SELF, movement.multiply(0, 1, 0));
+            entity.move(SELF, transformMovement(movement.multiply(1, 0, 1), walkwayBE));
+            entity.move(SELF, transformMovement(movement.multiply(0, 1, 0), walkwayBE));
         } else {
-            entity.move(SELF, movement);
+            entity.move(SELF, transformMovement(movement, walkwayBE));
         }
 
         // Placement on steps
@@ -190,6 +194,35 @@ public class WalkwayMovementHandler {
                 return true;
         }
         return false;
+    }
+
+    // Compatibility code //
+
+    private static final List<WalkwayTransformer> TRANSFORMERS = new ReferenceArrayList<>();
+
+    public static void addWalkwayTransformer(WalkwayTransformer t) { TRANSFORMERS.add(t); }
+
+    public static Vec3 getEntityPos(Entity entity, BlockEntity be) {
+        for (WalkwayTransformer t : TRANSFORMERS) {
+            Optional<Vec3> o = t.transformPos(entity, be);
+            if (o.isPresent())
+                return o.get();
+        }
+        return entity.position();
+    }
+
+    public static Vec3 transformMovement(Vec3 movement, BlockEntity be) {
+        for (WalkwayTransformer t : TRANSFORMERS) {
+            Optional<Vec3> o = t.transformMovement(movement, be);
+            if (o.isPresent())
+                return o.get();
+        }
+        return movement;
+    }
+
+    public interface WalkwayTransformer {
+        Optional<Vec3> transformPos(Entity entity, BlockEntity be);
+        Optional<Vec3> transformMovement(Vec3 movement, BlockEntity be);
     }
 
 }

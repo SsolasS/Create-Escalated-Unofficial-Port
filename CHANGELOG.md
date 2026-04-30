@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0] - Unreleased
+
+Create: Escalated now has compatibility with Sable (Create: Aeronautics) on NeoForge 1.21.1.
+
+### Fixed:
+- Fixed walkways and escalators not working on Sable sublevels
+
 ## [1.2.1] - 2026-01-07
 
 Create: Escalated now supports Create v6.0.8.1 on Fabric 1.20.1.
