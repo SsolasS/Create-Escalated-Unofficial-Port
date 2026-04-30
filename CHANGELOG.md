@@ -4,6 +4,9 @@
 
 Create: Escalated now has compatibility with Sable (Create: Aeronautics) on NeoForge 1.21.1.
 
+### Added:
+- Added support for moving Sable sublevels using walkways and escalators
+
 ### Fixed:
 - Fixed walkways and escalators not working on Sable sublevels
 
