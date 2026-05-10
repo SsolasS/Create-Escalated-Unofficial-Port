@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.3.0] - Unreleased
+## [1.3.0] - 2026-05-10
 
 Create: Escalated now has compatibility with Sable (Create: Aeronautics) on NeoForge 1.21.1.
 
