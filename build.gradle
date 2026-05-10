@@ -166,7 +166,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/cannoneers-of-create/createbigcannons"
+            url = uri("https://maven.pkg.github.com/create-in-locomotion/create-escalated")
             credentials {
                 username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
                 password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
@@ -174,7 +174,7 @@ publishing {
         }
         maven {
             name = "realRobotixMaven"
-            url = "https://maven.realrobotix.me/createbigcannons"
+            url = uri("https://maven.realrobotix.me/escalated")
             credentials(PasswordCredentials)
         }
     }
