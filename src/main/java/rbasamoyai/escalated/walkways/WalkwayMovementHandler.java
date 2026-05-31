@@ -152,14 +152,18 @@ public class WalkwayMovementHandler {
 
         entity.fallDistance = 0;
 
+        if (isPlayer && hasMovementInput(entity) && (movingUp || movingDown)) {
+            applyPlayerInputCombinedMovement(entity, transformMovement(movement, walkwayBE), movingUp, movingDown, movementSpeed);
+            if (!entity.level().isClientSide)
+                WalkwayTravelTracker.trackPlayerOnWalkway((Player) entity, 300); // 15 seconds
+            return;
+        }
+
         if (movingUp) {
-            Vec3 prevPos = entity.position();
-            entity.move(SELF, transformMovement(movement, walkwayBE));
-            if (entity.horizontalCollision) {
-                entity.setPos(prevPos); // Restore position and try again, but with adjusted starting condition
-                entity.move(SELF, transformMovement(new Vec3(0, movement.y * 0.1, 0), walkwayBE)); // adjusted
-                entity.move(SELF, transformMovement(movement, walkwayBE));
-            }
+            float minVelocity = .13f;
+            float yMovement = (float) -Math.max(Math.abs(movement.y), minVelocity);
+            entity.move(SELF, transformMovement(new Vec3(0, yMovement, 0), walkwayBE));
+            entity.move(SELF, transformMovement(movement.multiply(1, 0, 1), walkwayBE));
         } else if (movingDown) {
             entity.move(SELF, transformMovement(movement.multiply(1, 0, 1), walkwayBE));
             entity.move(SELF, transformMovement(movement.multiply(0, 1, 0), walkwayBE));
@@ -176,6 +180,71 @@ public class WalkwayMovementHandler {
         if (!isPlayer && entity instanceof LivingEntity livingEntity) {
             livingEntity.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(step);
         }
+
+        boolean movedPastEndingSlope = onSlope && (isWalkway(level, entity.blockPosition()) || isWalkway(level, entity.blockPosition().below()));
+
+        if (movedPastEndingSlope && !movingDown && Math.abs(movementSpeed) > 0)
+            entity.setPos(entity.getX(), entity.getY() + movement.y, entity.getZ());
+        if (movedPastEndingSlope) {
+            entity.setDeltaMovement(transformMovement(movement, walkwayBE));
+            entity.hurtMarked = true;
+        }
+    }
+
+    private static boolean isWalkway(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getBlock() instanceof WalkwayBlock;
+    }
+
+    private static boolean hasMovementInput(Entity entity) {
+        return entity instanceof LivingEntity living && (living.zza != 0 || living.xxa != 0);
+    }
+
+    private static void applyPlayerInputCombinedMovement(Entity entity, Vec3 movement, boolean movingUp, boolean movingDown, float movementSpeed) {
+        Vec3 delta = entity.getDeltaMovement();
+        Vec3 horizontalAssist = movement.multiply(1, 0, 1);
+        Vec3 input = getWorldInput(entity);
+        double dot = input.lengthSqr() < 1.0E-7 || horizontalAssist.lengthSqr() < 1.0E-7
+                ? 0
+                : input.normalize().dot(horizontalAssist.normalize());
+        double scale = dot > 0.25 ? 0.2 : dot < -0.25 ? 0.55 : 0.35;
+        Vec3 combined = delta;
+        if (horizontalAssist.lengthSqr() > 1.0E-7) {
+            Vec3 assistDirection = horizontalAssist.normalize();
+            double targetAlongAssist = horizontalAssist.length() * scale;
+            double currentAlongAssist = delta.dot(assistDirection);
+            double addAlongAssist = targetAlongAssist - currentAlongAssist;
+            addAlongAssist = Math.max(-targetAlongAssist, Math.min(targetAlongAssist, addAlongAssist));
+            combined = combined.add(assistDirection.scale(addAlongAssist));
+        }
+
+        double verticalAssist = Math.min(Math.max(Math.abs(movement.y) * 0.75, Math.abs(movementSpeed) * 0.5), 0.12);
+        if (movingUp)
+            combined = new Vec3(combined.x, Math.max(delta.y, verticalAssist), combined.z);
+        if (movingDown)
+            combined = new Vec3(combined.x, Math.min(delta.y, -verticalAssist), combined.z);
+
+        entity.setDeltaMovement(combined);
+        entity.setOnGround(true);
+        entity.hurtMarked = true;
+    }
+
+    private static Vec3 getWorldInput(Entity entity) {
+        if (!(entity instanceof LivingEntity living))
+            return Vec3.ZERO;
+        double x = living.xxa;
+        double z = living.zza;
+        double lengthSqr = x * x + z * z;
+        if (lengthSqr < 1.0E-7)
+            return Vec3.ZERO;
+        if (lengthSqr > 1) {
+            double length = Math.sqrt(lengthSqr);
+            x /= length;
+            z /= length;
+        }
+        double yaw = Math.toRadians(entity.getYRot());
+        double sin = Math.sin(yaw);
+        double cos = Math.cos(yaw);
+        return new Vec3(x * cos - z * sin, 0, z * cos + x * sin);
     }
 
     public static boolean shouldIgnoreBlocking(Entity me, Entity other) {
