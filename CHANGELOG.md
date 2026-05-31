@@ -4,6 +4,7 @@
 
 ### Fixed:
 - Fixed crash with Petrolpark's Library
+- Fixed escalator movement jitter
 
 ## [1.3.0] - 2026-05-10
 
