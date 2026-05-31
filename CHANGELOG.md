@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.1] - Unreleased
+
+### Fixed:
+- Fixed crash with Petrolpark's Library
+
 ## [1.3.0] - 2026-05-10
 
 Create: Escalated now has compatibility with Sable (Create: Aeronautics) on NeoForge 1.21.1.
