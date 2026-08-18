@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 import rbasamoyai.escalated.walkways.AbstractWalkwayBlock;
 import rbasamoyai.escalated.walkways.WalkwayBlockEntity;
@@ -20,11 +21,11 @@ public class WalkwayBlockCallback implements BlockSubLevelCollisionCallback {
 
     // Adapted from BeltBlockCallback#sable$onCollision --ritchie
     @Override
-    public CollisionResult sable$onCollision(BlockPos blockPos, Vector3d pos, double impactVelocity) {
+    public CollisionResult sable$onCollision(BlockPos hitBlockPos, @Nullable BlockPos otherHitBlockPos, Vector3d impactPosition, double impactVelocity) {
         SubLevelPhysicsSystem system = SubLevelPhysicsSystem.getCurrentlySteppingSystem();
         ServerLevel level = system.getLevel();
 
-        if (!(level.getBlockEntity(blockPos) instanceof WalkwayBlockEntity walkwayBE))
+        if (!(level.getBlockEntity(hitBlockPos) instanceof WalkwayBlockEntity walkwayBE))
             return CollisionResult.NONE;
 
         BlockState state = walkwayBE.getBlockState();

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.3.2] - Unreleased
+
+### Fixed:
+- Fixed crash with Sable 2.0.x
+
 ## [1.3.1] - 2026-05-31
 
 ### Fixed:
