@@ -14,10 +14,10 @@
 
   "entrypoints": {
     "main": [
-      "rbasamoyai.escalated.CreateEscalated"
+      "rbasamoyai.escalated.CreateEscalatedFabric"
     ],
     "client": [
-      "rbasamoyai.escalated.EscalatedClientCommon"
+      "rbasamoyai.escalated.CreateEscalatedFabricClient"
     ]
   },
 
@@ -30,7 +30,7 @@
     "minecraft": "26.2",
     "java": ">=25",
     "fabric-api": "*",
-    "create-fly": "*"
+    "create": "*"
   },
 
   "suggests": {
