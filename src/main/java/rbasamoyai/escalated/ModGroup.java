@@ -1,62 +1,57 @@
 package rbasamoyai.escalated;
 
 import com.simibubi.create.Create;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Registry;
 import rbasamoyai.escalated.index.EscalatedItems;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class ModGroup {
 
-    public static final ResourceKey<CreativeModeTab> MAIN_TAB_KEY = makeKey("base");
+    public static final ResourceKey<CreativeModeTab> MAIN_TAB_KEY =
+            makeKey("base");
 
-    private static final DeferredRegister<CreativeModeTab> TAB_REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateEscalated.MOD_ID);
-    private static Map<ResourceKey<CreativeModeTab>, DeferredHolder<CreativeModeTab, CreativeModeTab>> TABS = new HashMap<>();
+    public static CreativeModeTab GROUP;
 
-    public static final Supplier<CreativeModeTab> GROUP = wrapGroup("base", () -> createBuilder()
-            .title(Component.translatable("itemGroup." + CreateEscalated.MOD_ID + ".base"))
-            .icon(EscalatedItems.METAL_WALKWAY_STEPS::asStack)
-            .displayItems((param, output) -> {
-                output.acceptAll(Arrays.asList(
-                        EscalatedItems.METAL_WALKWAY_STEPS.asStack(),
-                        EscalatedItems.WOODEN_WALKWAY_STEPS.asStack()
-                ));
-            })
-            .build());
+    public static void register() {
+        if (GROUP != null)
+            return;
 
-    public static Supplier<CreativeModeTab> wrapGroup(String id, Supplier<CreativeModeTab> sup) {
-        DeferredHolder<CreativeModeTab, CreativeModeTab> obj = TAB_REGISTER.register(id, sup);
-        TABS.put(ModGroup.makeKey(id), obj);
-        return obj;
-    }
+        GROUP = CreativeModeTab.builder()
+                .title(Component.translatable(
+                        "itemGroup." + CreateEscalated.MOD_ID + ".base"))
+                .icon(() -> new ItemStack(
+                        EscalatedItems.METAL_WALKWAY_STEPS.get()))
+                .displayItems((parameters, output) -> {
+                    output.accept(EscalatedItems.METAL_WALKWAY_STEPS.get());
+                    output.accept(EscalatedItems.WOODEN_WALKWAY_STEPS.get());
+                })
+                .build();
 
-    public static CreativeModeTab.Builder createBuilder() {
-        return CreativeModeTab.builder().withTabsBefore(Create.asResource("palettes"));
-    }
+        Registry.register(
+                BuiltInRegistries.CREATIVE_MODE_TAB,
+                MAIN_TAB_KEY,
+                GROUP
+        );
 
-    public static void registerNeoForge(IEventBus modBus) {
-        TAB_REGISTER.register(modBus);
+        CreateEscalated.REGISTRATE.addRawLang(
+                "itemGroup." + CreateEscalated.MOD_ID + ".base",
+                "Create: Escalated"
+        );
     }
 
     public static void setDefaultTabToNull() {
-        CreateEscalated.REGISTRATE.defaultCreativeTab((ResourceKey<CreativeModeTab>) null);
+        CreateEscalated.REGISTRATE.defaultCreativeTab(null);
     }
 
     public static ResourceKey<CreativeModeTab> makeKey(String id) {
-        return ResourceKey.create(Registries.CREATIVE_MODE_TAB, CreateEscalated.resource(id));
+        return ResourceKey.create(
+                Registries.CREATIVE_MODE_TAB,
+                CreateEscalated.resource(id)
+        );
     }
-
-    public static void register() {
-        CreateEscalated.REGISTRATE.addRawLang("itemGroup." + CreateEscalated.MOD_ID + ".base", "Create: Escalated");
-    }
-
 }
