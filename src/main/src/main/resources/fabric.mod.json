@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "escalated",
+  "version": "${version}",
+  "name": "Create: Escalated",
+  "description": "Bringing you to higher places in your Create mod builds",
+  "authors": [
+    "rbasamoyai"
+  ],
+  "license": "MIT",
+  "icon": "icon.png",
+
+  "environment": "*",
+
+  "entrypoints": {
+    "main": [
+      "rbasamoyai.escalated.CreateEscalated"
+    ],
+    "client": [
+      "rbasamoyai.escalated.EscalatedClientCommon"
+    ]
+  },
+
+  "mixins": [
+    "escalated.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "26.2",
+    "java": ">=25",
+    "create": "*"
+  },
+
+  "suggests": {
+    "sable": "*"
+  }
+}
